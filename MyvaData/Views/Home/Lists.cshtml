@@ -1,0 +1,38 @@
+﻿<md-toolbar>
+    <div class="md-toolbar-tools">
+        <h2>
+            <span>Myva Data</span>
+        </h2>
+    </div>
+</md-toolbar>
+<div class="mv-lists">
+    <md-content layout-padding>
+        <form name="newlist">
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>New list title</label>
+                    <input name="title" required ng-model="title">
+                    <div ng-messages="newlist.title.$error">
+                        <div ng-message="required" ng-show="newlist.title.$invalid">Title is required for the new list.</div>
+                    </div>
+                </md-input-container>
+                <md-button class="md-secondary" ng-click="new()">Create</md-button>
+            </div>
+        </form>
+    </md-content>
+
+    <md-content class="mv-searchbox">
+        <div layout-gt-sm="row">
+            <md-input-container md-no-float class="md-block" flex-gt-sm>
+                <input ng-model="searchText" placeholder="Search...">
+            </md-input-container>
+        </div>
+    </md-content>
+    <md-list>
+        <md-subheader class="md-no-sticky">All lists</md-subheader>
+        <md-list-item ng-click="open(list.Id)" ng-repeat="list in lists | filter:searchText">
+            <p> {{ list.Title }} </p>
+            <md-button class="md-secondary" ng-click="edit(list.Id)">Edit</md-button>
+        </md-list-item>
+    </md-list>
+</div>

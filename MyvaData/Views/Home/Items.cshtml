@@ -1,0 +1,82 @@
+﻿<md-toolbar>
+    <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" ng-href="#/Lists" aria-label="Settings">
+            <md-icon>home</md-icon>
+        </md-button>
+        <h2>
+            <span>{{list.Title}}</span>
+        </h2>
+        <span flex></span>
+        <md-button md-no-ink ng-href="#/ItemNew/{{list.Id}}" aria-label="Settings">
+            <md-icon style="font-size:14px; height:16px;">mode_edit</md-icon> New item
+        </md-button>
+    </div>
+</md-toolbar>
+<div ng-cloak>
+    <md-content flex layout-padding>
+        <section>
+            <div>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Search</label>
+                    <input ng-model="filter.searchQuery" maxlength="250" />
+                </md-input-container>
+            </div>
+            <div class="mv-items md-whiteframe-3dp">
+                <table class="mv-items-table">
+                    <thead>
+                        <tr class="mv-items-header">
+                            <th ng-repeat="field in list.Fields">{{field.Title}}</th>
+                        </tr>
+                        <tr class="mv-items-filter">
+                            <th ng-repeat="field in list.Fields">
+                                <div layout="row" layout-wrap ng-if="field.Format == 'Date'" class="mv-filter-date">
+                                    <md-button class="md-icon-button" mv-datefilter="" ng-model="filter.dateItems[field.Id]"><md-icon md-svg-src="@Url.Content("~/Content/ttt.svg")"></md-icon></md-button>
+                                    <md-datepicker ng-model="filter.dateItems[field.Id].mainDate" md-placeholder="Enter date"></md-datepicker>
+                                </div>
+                                <div layout="row" layout-wrap ng-if="field.Format == 'Text'">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <input ng-model="filter.textItems[field.Id]" maxlength="250" />
+                                    </md-input-container>
+                                </div>
+                                <div layout="row" layout-wrap ng-if="field.Format == 'Select'">
+                                    <md-input-container class="md-block">
+                                        <md-select ng-model="filter.selectItems[field.Id]" multiple="true">
+                                            <md-option ng-repeat="option in field.Options" value="{{option.Id}}">
+                                                {{option.Title}}
+                                            </md-option>
+                                        </md-select>
+                                    </md-input-container>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in items" ng-click="open(item.Id)">
+                            <td ng-repeat="field in list.Fields">
+                                <div ng-if="field.Format == 'Text'">
+                                    {{item.Values[field.Id].StringValue}}
+                                </div>
+                                <div ng-if="field.Format == 'Number'">
+                                    {{item.Values[field.Id].IntValue}}
+                                </div>
+                                <div ng-if="field.Format == 'Date'" class="mv-date">
+                                    {{item.Values[field.Id].DateValue | date: 'yyyy-MM-dd'}}
+                                </div>
+                                <div ng-if="field.Format == 'Select'">
+                                    {{item.Values[field.Id].OptionTitle}}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+                <div class="mv-items-actions" flex>
+                    <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+                        <md-button class="md-raised md-primary" ng-href="#/ItemNew/{{id}}">New Item</md-button>
+                        <md-button ng-href="#/Lists">Back to lists</md-button>
+                        <md-button ng-href="#/ListEdit/{{id}}">Edit list</md-button>
+                    </section>
+                </div>
+        </section>
+    </md-content>
+</div>

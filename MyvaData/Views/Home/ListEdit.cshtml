@@ -1,0 +1,178 @@
+﻿<md-toolbar>
+    <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" ng-href="#/Lists" aria-label="Settings">
+            <md-icon>home</md-icon>
+        </md-button>
+        <h2>
+            <span>{{list.Info.Title}}</span>
+        </h2>
+        <span flex></span>
+        <md-button hide-gt-md ng-click="toggleLeft()" ng-if="!$mdSidenav('left').isOpen()">
+            <md-icon style="font-size:14px; height:16px;">menu</md-icon> Open
+        </md-button>
+        <md-button hide-gt-md ng-click="close()" ng-if="$mdSidenav('left').isOpen()">
+            <md-icon style="font-size:14px; height:16px;">menu</md-icon> Close
+        </md-button>
+        <md-button md-no-ink ng-href="#/Items/{{list.Id}}" aria-label="Settings">
+            <md-icon style="font-size:14px; height:16px;">reply</md-icon> To list
+        </md-button>
+    </div>
+</md-toolbar>
+<div layout="column" ng-cloak>
+    <section layout="row" flex>
+        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
+            <md-content>
+                <md-tabs md-dynamic-height md-border-bottom md-selected="tabIndex">
+                    <md-tab label="Fields">
+                        <md-content>
+                            <md-list>
+                                <md-list-item ng-click="add('Text')">
+                                    <md-icon>add_circle</md-icon>
+                                    <p>Textbox</p>
+                                </md-list-item>
+                                <md-list-item ng-click="add('Select')">
+                                    <md-icon>add_circle</md-icon>
+                                    <p>Single choice</p>
+                                </md-list-item>
+                                <md-list-item ng-click="add('Multiple')">
+                                    <md-icon>add_circle</md-icon>
+                                    <p>Multiple choice</p>
+                                </md-list-item>
+                                <md-list-item ng-click="add('Number')">
+                                    <md-icon>add_circle</md-icon>
+                                    <p>Number</p>
+                                </md-list-item>
+                                <md-list-item ng-click="add('Date')">
+                                    <md-icon>add_circle</md-icon>
+                                    <p>Date</p>
+                                </md-list-item>
+                            </md-list>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="Field">
+                        <md-content layout="column" ng-if="current">
+                            <div layout="row">
+                                <md-button flex class="md-primary md-hue-1" ng-click="sortDown(current)">
+                                    <md-icon>keyboard_arrow_down</md-icon> Down
+                                </md-button>
+                                <md-button flex class="md-primary md-hue-1" ng-click="sortUp(current)">
+                                    <md-icon>keyboard_arrow_up</md-icon> Up
+                                </md-button>
+                            </div>
+                            <md-input-container class="md-block" flex-gt-sm style="margin-bottom:0">
+                                <label>Title</label>
+                                <input ng-model="current.Info.Title" />
+                            </md-input-container>
+                            <div style="padding-left:15px;">
+                                <md-checkbox ng-model="current.Info.IsRequired" aria-label="Required" class="md-primary">
+                                    Required
+                                </md-checkbox>
+                            </div>
+                            <md-button class="md-warn" ng-click="remove()">Delete</md-button>
+                            <div layout="row" class="mv-options" ng-if="current.Info.Format == 'Multiple' || current.Info.Format == 'Select'">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>Option title</label>
+                                    <input ng-model="current.$option" />
+                                </md-input-container>
+                                <md-button class="md-fab md-mini md-primary" aria-label="Add" ng-click="current.addOption()">
+                                    <md-icon>add</md-icon>
+                                </md-button>
+                            </div>
+                            <md-list class="mv-options" ng-if="current.Info.Format == 'Multiple' || current.Info.Format == 'Select'">
+                                <md-list-item ng-repeat="option in current.Options track by $index">
+                                    <md-input-container class="md-block" flex-gt-sm>
+                                        <input ng-model="option.Info.Title" />
+                                    </md-input-container>
+                                    <md-button class="md-icon-button md-warn" aria-label="Clear" ng-click="current.removeOption(option)">
+                                        <md-icon>clear</md-icon>
+                                    </md-button>
+                                </md-list-item>
+                            </md-list>
+                        </md-content>
+                    </md-tab>
+                    <md-tab label="List">
+                        <form name="mvList">
+                            <md-content class="md-padding" layout="column">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>List title</label>
+                                    <input required name="listtitle" ng-model="list.Info.Title" />
+                                    <div ng-messages="mvList.listtitle.$error">
+                                        <div ng-message="required">Title is required.</div>
+                                    </div>
+                                </md-input-container>
+                                <md-button class="md-warn" ng-click="removeList()">Delete list</md-button>
+                            </md-content>
+                        </form>
+                    </md-tab>
+                </md-tabs>
+            </md-content>
+        </md-sidenav>
+        <md-content flex layout-padding>
+            <section>
+                <md-subheader class="md-primary">{{list.Title}}</md-subheader>
+                <form name="mvForm">
+                    <div layout="column" layout-fill>
+                        <div ng-repeat="item in items" ng-if="!item.$removed" ng-form="subForm" ng-click="select(item)" ng-class="{'md-whiteframe-1dp': item == current}">
+                            <div ng-if="item.Info.Format == 'Text'">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>{{item.Info.Title}}</label>
+                                    <input ng-required="item.Info.IsRequired" ng-model="item.$value" maxlength="250" />
+                                    <div ng-messages="subForm.$error">
+                                        <div ng-message="required">This is required.</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+
+                            <div ng-if="item.Info.Format == 'Number'">
+                                <md-input-container class="md-block" flex-gt-sm>
+                                    <label>{{item.Info.Title}}</label>
+                                    <input ng-required="item.Info.IsRequired" type="number" />
+                                    <div ng-messages="subForm.$error">
+                                        <div ng-message="required">This is required.</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                            <div ng-if="item.Info.Format == 'Date'" class="mv-date">
+                                <div>{{item.Info.Title}}</div>
+                                <md-datepicker ng-model="item.$value" ng-required="item.Info.IsRequired" md-placeholder="Enter Date">
+                                </md-datepicker>
+                                <md-input-container class="md-block">
+                                    <div ng-messages="subForm.$error" ng-if="subForm.$dirty">
+                                        <div ng-message="required" style="opacity: 1; margin-top: 0px;">This is required.</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                            <div ng-if="item.Info.Format == 'Select'">
+                                <md-input-container class="md-block">
+                                    <label>{{item.Info.Title}}</label>
+                                    <md-select ng-required="item.Info.IsRequired" ng-model="item.$value">
+                                        <md-option ng-repeat="option in item.Options">
+                                            {{option.Info.Title}}
+                                        </md-option>
+                                    </md-select>
+                                    <div ng-messages="subForm.$error">
+                                        <div ng-message="required">This is required.</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                            <div ng-if="item.Info.Format == 'Multiple'">
+                                <md-input-container class="md-block">
+                                    <label>{{item.Info.Title}}</label>
+                                    <md-select ng-required="item.Info.IsRequired" ng-model="item.$value" multiple="true">
+                                        <md-option ng-repeat="option in item.Options" value="{{$index}}">
+                                            {{option.Info.Title}}
+                                        </md-option>
+                                    </md-select>
+                                    <div ng-messages="subForm.$error">
+                                        <div ng-message="required">This is required.</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </div>
+                    <div flex></div>
+                </form>
+            </section>
+        </md-content>
+    </section>
+</div>

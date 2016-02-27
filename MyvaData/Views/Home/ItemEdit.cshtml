@@ -1,0 +1,90 @@
+﻿<md-toolbar>
+    <div class="md-toolbar-tools">
+        <md-button class="md-icon-button" ng-href="#/Lists" aria-label="Settings">
+            <md-icon>home</md-icon>
+        </md-button>
+        <h2>
+            <span>{{list.Title}}</span>
+        </h2>
+        <span flex></span>
+        <md-button md-no-ink ng-href="#/Items/{{list.Id}}" aria-label="Settings">
+            <md-icon style="font-size:14px; height:16px;">mode_edit</md-icon> To list
+        </md-button>
+    </div>
+</md-toolbar>
+<div layout="column" class="mv-edit-item" ng-cloak>
+    <md-content flex layout-padding>
+        <section class="md-whiteframe-1dp">
+            <md-subheader class="md-primary">{{list.Title}}</md-subheader>
+            <form name="mvForm">
+                <div layout="column" layout-fill>
+                    <div ng-repeat="field in list.Fields" ng-form="subForm">
+                        <div ng-if="field.Format == 'Text'">
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label>{{field.Title}}</label>
+                                <input ng-required="field.IsRequired" ng-model="item.Values[field.Id].StringValue" maxlength="250" />
+                                <div ng-messages="subForm.$error">
+                                    <div ng-message="required">This is required.</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+
+                        <div ng-if="field.Format == 'Number'">
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label>{{field.Title}}</label>
+                                <input ng-required="field.IsRequired" type="number" ng-model="item.Values[field.Id].IntValue" />
+                                <div ng-messages="subForm.$error">
+                                    <div ng-message="required">This is required.</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div ng-if="field.Format == 'Date'" class="mv-date" layout="row" layout-xs="column">
+                            <div class="mv-date-label"><label>{{field.Title}}</label></div>
+                            <div>
+                                <md-datepicker ng-model="item.Values[field.Id].DateValue" ng-required="field.IsRequired" md-placeholder="Enter Date">
+                                </md-datepicker>
+                                <md-input-container class="md-block" ng-if="subForm.$dirty">
+                                    <div ng-messages="subForm.$error">
+                                        <div ng-message="required" style="opacity: 1; margin-top: 0px;">This is required.</div>
+                                    </div>
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div ng-if="field.Format == 'Select'">
+                            <md-input-container class="md-block">
+                                <label>{{field.Title}}</label>
+                                <md-select ng-required="field.IsRequired" ng-model="item.Values[field.Id].OptionId">
+                                    <md-option ng-repeat="option in field.Options" value="{{option.Id}}">
+                                        {{option.Title}}
+                                    </md-option>
+                                </md-select>
+                                <div ng-messages="subForm.$error">
+                                    <div ng-message="required">This is required.</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                        <div ng-if="field.Format == 'Multiple'">
+                            <md-input-container class="md-block">
+                                <label>{{field.Title}}</label>
+                                <md-select ng-required="field.IsRequired" ng-model="item.Values[field.Id].OptionId" multiple="true">
+                                    <md-option ng-repeat="option in field.Options" value="{{option.Id}}">
+                                        {{option.Title}}
+                                    </md-option>
+                                </md-select>
+                                <div ng-messages="subForm.$error">
+                                    <div ng-message="required">This is required.</div>
+                                </div>
+                            </md-input-container>
+                        </div>
+                    </div>
+                </div>
+                <div class="mv-item-actions" flex>
+                    <section layout="row" layout-sm="column" layout-align="center center" layout-wrap>
+                        <md-button md-no-ink class="md-raised md-primary" ng-click="save()">Save</md-button>
+                        <md-button ng-click="cancel()">Cancel</md-button>
+                    </section>
+                </div>
+            </form>
+        </section>
+    </md-content>
+</div>

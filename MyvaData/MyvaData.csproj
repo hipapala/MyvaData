@@ -171,6 +171,10 @@
   <ItemGroup>
     <Content Include="App_Data\myvadata.sql" />
     <Content Include="Content\angular-material.css" />
+    <Content Include="Content\editform.png" />
+    <Content Include="Content\editlist.png" />
+    <Content Include="Content\grid.png" />
+    <Content Include="Content\lists.png" />
     <Content Include="Content\ttt.svg" />
     <Content Include="Content\test.svg" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
